@@ -1,2 +1,4 @@
 cognito*
-.vscode
+.vscode/
+venv/
+.venv/
