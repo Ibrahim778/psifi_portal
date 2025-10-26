@@ -883,8 +883,11 @@
   // Form submission with loading state
   document.getElementById("loginForm").addEventListener("submit", function (e) {
     const submitBtn = document.getElementById("loginBtn");
+    const userInput = document.getElementById("id_username")
     const btnText = submitBtn.querySelector(".btn-text");
     const btnLoader = submitBtn.querySelector(".btn-loader");
+    
+    localStorage.setItem("loginUser", userInput.value);
 
     // Show loading state
     btnText.style.display = "none";

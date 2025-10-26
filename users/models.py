@@ -18,8 +18,15 @@ def calculate_nights(arrival, departure):
             pass
     return 1
 
+class RegistrationLink(models.Model):
+    user = models.CharField(max_length=128, unique=True) # Shouldn't have multiple registrations from the same head delegate
+    cognito_link = models.URLField()
 
-class SymposiumRegistration(models.Model):
+    def __str__(self):
+        return f"{self.user or 'User'} / {self.cognito_link or 'Cognito Link'}"
+
+
+class EventRegistration(models.Model):
     PAYMENT_CHOICES = [
         ('Pending', 'Pending'),
         ('Paid', 'Paid'),
@@ -104,7 +111,7 @@ class SymposiumRegistration(models.Model):
             (self.team_size or 0)
 
     def update_fees(self, save=True):
-        from .models import SymposiumRegistration  # for CA code queries
+        from .models import EventRegistration  # for CA code queries
 
         print(self.event1_fee)
         self.update_event_fee()
@@ -114,7 +121,7 @@ class SymposiumRegistration(models.Model):
         team_count = self.team_size or self.delegates.count()  # fallback to delegate count
 
         # Calculate CA discount
-        ca_team_count = SymposiumRegistration.objects.filter(
+        ca_team_count = EventRegistration.objects.filter(
             ca_code=self.ca_code).count() if self.ca_code else 0
         ca_discount = self.ca_code and ca_team_count >= 5  # More than 4
 
@@ -131,7 +138,7 @@ class SymposiumRegistration(models.Model):
             delegation_fee = 0
 
             # Update all CA teams to have delegation_fee 0
-            SymposiumRegistration.objects.filter(
+            EventRegistration.objects.filter(
                 ca_code=self.ca_code).update(delegation_fee=0)
 
         # --- Accommodation Fee ---
@@ -156,7 +163,7 @@ class SymposiumRegistration(models.Model):
             from django.db.models.functions import Cast
             from django.db.models import IntegerField
             from django.db.models import F, Max
-            qs = SymposiumRegistration.objects.filter(
+            qs = EventRegistration.objects.filter(
                 team_id__startswith='LSS-')
             last_num = (
                 qs.annotate(num=Cast(F('team_id')[4:], IntegerField()))
@@ -174,10 +181,9 @@ class SymposiumRegistration(models.Model):
     def __str__(self):
         return f"{self.team_name or 'Team'} / {self.email}"
 
-
-class SymposiumDelegate(models.Model):
+class EventDelegate(models.Model):
     registration = models.ForeignKey(
-        SymposiumRegistration, related_name='delegates', on_delete=models.CASCADE)
+        EventRegistration, related_name='delegates', on_delete=models.CASCADE)
     number = models.PositiveSmallIntegerField()
     name = models.CharField(max_length=128, blank=True, null=True)
     age = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -209,7 +215,6 @@ class SymposiumDelegate(models.Model):
     def __str__(self):
         return f"Delegate {self.number} ({self.name}) / {self.registration.team_name}"
 
-
 class CampusAmbassador(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=32, unique=True)
@@ -222,18 +227,18 @@ class CampusAmbassador(models.Model):
     def __str__(self):
         return f"{self.name} ({self.code})"
 
+# ...yall made a model to do exactly what I did and didn't even use it
+# class FormState(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     form_name = models.CharField(max_length=100, default='psifi_registration')
+#     form_data = models.JSONField(default=dict)
+#     cognito_save_url = models.URLField(
+#         blank=True, null=True)  # Store Cognito's save URL
+#     last_updated = models.DateTimeField(auto_now=True)
+#     is_submitted = models.BooleanField(default=False)
 
-class FormState(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    form_name = models.CharField(max_length=100, default='psifi_registration')
-    form_data = models.JSONField(default=dict)
-    cognito_save_url = models.URLField(
-        blank=True, null=True)  # Store Cognito's save URL
-    last_updated = models.DateTimeField(auto_now=True)
-    is_submitted = models.BooleanField(default=False)
+#     class Meta:
+#         unique_together = ('user', 'form_name')
 
-    class Meta:
-        unique_together = ('user', 'form_name')
-
-    def __str__(self):
-        return f"{self.user.username} - {self.form_name}"
+#     def __str__(self):
+#         return f"{self.user.username} - {self.form_name}"

@@ -1,870 +1,888 @@
 <html>
-  <head>
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>PsiFi XVII</title>
     <style type="text/css">
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        background: #000000;
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-        overflow-x: hidden;
-      }
-
-      /* Background with gradient like home page */
-      .background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          135deg,
-          #000000 0%,
-          #030a06 42%,
-          #082015 70%,
-          #062a14 100%
-        );
-        background-attachment: fixed;
-        z-index: 1;
-      }
-
-      .background::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: radial-gradient(
-            circle at 25% 25%,
-            rgba(5, 59, 5, 0.03) 1px,
-            transparent 1px
-          ),
-          radial-gradient(
-            circle at 75% 75%,
-            rgba(0, 20, 0, 0.02) 1px,
-            transparent 1px
-          );
-        background-size: 50px 50px;
-        opacity: 0.8;
-      }
-
-      /* Floating Orbs */
-      .background-elements {
-        position: fixed;
-        inset: 0;
-        overflow: hidden;
-        z-index: 2;
-        pointer-events: none;
-      }
-
-      .floating-orb {
-        filter: blur(64px);
-        opacity: 0.4;
-        border-radius: 50%;
-      }
-
-      .orb-1 {
-        width: 320px;
-        height: 320px;
-        background: radial-gradient(
-          circle at 30% 30%,
-          rgba(12, 134, 96, 0.45),
-          rgba(4, 30, 18, 0.65)
-        );
-        position: absolute;
-        top: -10%;
-        left: -5%;
-      }
-      .orb-2 {
-        width: 420px;
-        height: 420px;
-        background: radial-gradient(
-          circle at 70% 40%,
-          rgba(24, 160, 80, 0.45),
-          rgba(3, 18, 10, 0.65)
-        );
-        position: absolute;
-        bottom: -15%;
-        right: -10%;
-      }
-      .orb-3 {
-        width: 360px;
-        height: 360px;
-        background: radial-gradient(
-          circle at 50% 50%,
-          rgba(6, 92, 70, 0.35),
-          rgba(0, 0, 0, 0.7)
-        );
-        position: absolute;
-        top: 40%;
-        right: 5%;
-      }
-
-      /* Floating Particles */
-      .particles-container {
-        position: fixed;
-        inset: 0;
-        overflow: hidden;
-        z-index: 2;
-        pointer-events: none;
-      }
-
-      .particle {
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        background: rgba(255, 255, 255, 0.12);
-        border-radius: 50%;
-        animation: particleFloat 8s linear infinite;
-        box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
-      }
-
-      .particle:nth-child(odd) {
-        animation-duration: 6s;
-      }
-      .particle:nth-child(even) {
-        animation-duration: 10s;
-      }
-
-      @keyframes particleFloat {
-        0% {
-          transform: translateY(100vh) rotate(0deg);
-          opacity: 0;
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #000000;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
         }
-        10% {
-          opacity: 1;
+
+        /* Background with gradient like home page */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #000000 0%,
+                    #030a06 42%,
+                    #082015 70%,
+                    #062a14 100%);
+            background-attachment: fixed;
+            z-index: 1;
         }
-        90% {
-          opacity: 1;
+
+        .background::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 25% 25%,
+                    rgba(5, 59, 5, 0.03) 1px,
+                    transparent 1px),
+                radial-gradient(circle at 75% 75%,
+                    rgba(0, 20, 0, 0.02) 1px,
+                    transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.8;
         }
-        100% {
-          transform: translateY(-100px) rotate(360deg);
-          opacity: 0;
+
+        /* Floating Orbs */
+        .background-elements {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
         }
-      }
 
-      /* Minimal Chameleon Style CSS - Let Cognito handle most formatting */
-      .form-container {
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        min-height: 100vh;
-        overflow: auto;
-        padding: 40px 20px;
-        box-sizing: border-box;
-      }
+        .floating-orb {
+            filter: blur(64px);
+            opacity: 0.4;
+            border-radius: 50%;
+        }
 
-      /* Form wrapper - minimal styling */
-      .form-container .cognito {
-        background: rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(8px);
-        border-radius: 12px;
-        padding: 20px;
-        border: 1px solid rgba(51, 204, 51, 0.2);
-        margin: 0 auto;
-      }
+        .orb-1 {
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle at 30% 30%,
+                    rgba(12, 134, 96, 0.45),
+                    rgba(4, 30, 18, 0.65));
+            position: absolute;
+            top: -10%;
+            left: -5%;
+        }
 
-      /* Only override essential colors for dark theme */
-      .form-container .c-forms-form {
-        background: transparent !important;
-      }
+        .orb-2 {
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle at 70% 40%,
+                    rgba(24, 160, 80, 0.45),
+                    rgba(3, 18, 10, 0.65));
+            position: absolute;
+            bottom: -15%;
+            right: -10%;
+        }
 
-      /* Labels - make them visible on dark background */
-      .form-container label,
-      .form-container .c-forms-label {
-        color: #ffffff !important;
-      }
+        .orb-3 {
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle at 50% 50%,
+                    rgba(6, 92, 70, 0.35),
+                    rgba(0, 0, 0, 0.7));
+            position: absolute;
+            top: 40%;
+            right: 5%;
+        }
 
-      /* Question text */
-      .form-container .c-forms-question {
-        color: #ffffff !important;
-      }
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 2;
+            pointer-events: none;
+        }
 
-      /* Input fields - minimal override */
-      .form-container input[type="text"],
-      .form-container input[type="email"],
-      .form-container input[type="tel"],
-      .form-container input[type="number"],
-      .form-container textarea,
-      .form-container select {
-        background: #ffffff !important;
-        color: #000000 !important;
-      }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 50%;
+            animation: particleFloat 8s linear infinite;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
+        }
 
-      /* Placeholder text */
-      .form-container input::placeholder,
-      .form-container textarea::placeholder {
-        color: #666666 !important;
-      }
+        .particle:nth-child(odd) {
+            animation-duration: 6s;
+        }
 
-      /* Dropdown options - make text black */
-      .form-container select option {
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
+        .particle:nth-child(even) {
+            animation-duration: 10s;
+        }
 
-      /* Cognito choice elements */
-      .form-container .cog-choice--dropdown,
-      .form-container .cog-choice--radiobuttons,
-      .form-container .cog-choice--checkboxes {
-        color: #000000 !important;
-      }
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
 
-      /* Cognito dropdown menus */
-      .form-container .c-forms-dropdown-option,
-      .form-container .c-forms-select-option {
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
+            10% {
+                opacity: 1;
+            }
 
-      .form-container .c-forms-dropdown-option:hover,
-      .form-container .c-forms-select-option:hover {
-        color: #000000 !important;
-        background: #f0f0f0 !important;
-      }
+            90% {
+                opacity: 1;
+            }
 
-      /* Element UI input components */
-      .form-container .el-input__inner {
-        background: #ffffff !important;
-        color: #000000 !important;
-        border: 1px solid #dcdfe6 !important;
-      }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
 
-      /* Element UI dropdown options - multiple selectors */
-      .el-select-dropdown__item,
-      .el-option,
-      .form-container .el-select-dropdown__item,
-      .form-container .el-option,
-      .el-select-dropdown .el-select-dropdown__item,
-      body .el-select-dropdown__item {
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
+        /* Minimal Chameleon Style CSS - Let Cognito handle most formatting */
+        .form-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            min-height: 100vh;
+            overflow: auto;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
 
-      .el-select-dropdown__item:hover,
-      .el-option:hover,
-      .form-container .el-select-dropdown__item:hover,
-      .form-container .el-option:hover,
-      .el-select-dropdown .el-select-dropdown__item:hover,
-      body .el-select-dropdown__item:hover {
-        color: #000000 !important;
-        background: #f5f7fa !important;
-      }
+        /* Form wrapper - minimal styling */
+        .form-container .cognito {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(51, 204, 51, 0.2);
+            margin: 0 auto;
+        }
 
-      /* Element UI dropdown list - target globally */
-      .el-select-dropdown,
-      .el-popper,
-      .form-container .el-select-dropdown,
-      .form-container .el-popper,
-      body .el-select-dropdown {
-        background: #ffffff !important;
-        border: 1px solid #e4e7ed !important;
-      }
+        /* Only override essential colors for dark theme */
+        .form-container .c-forms-form {
+            background: transparent !important;
+        }
 
-      /* Try targeting by aria attributes */
-      [role="listbox"],
-      [role="option"],
-      [id*="listbox"],
-      [id*="option"] {
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
+        /* Labels - make them visible on dark background */
+        .form-container label,
+        .form-container .c-forms-label {
+            color: #ffffff !important;
+        }
 
-      /* Cognito specific dropdown targeting */
-      [id*="cog-"][id*="-listbox"],
-      [id*="cog-"][id*="-option"] {
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
+        /* Question text */
+        .form-container .c-forms-question {
+            color: #ffffff !important;
+        }
 
-      /* Dropdown option items specifically */
-      .form-container .cog-choice--dropdown option,
-      .form-container .cog-choice--dropdown select option {
-        color: #000000 !important;
-        background: #ffffff !important;
-      }
+        /* Input fields - minimal override */
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="tel"],
+        .form-container input[type="number"],
+        .form-container textarea,
+        .form-container select {
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
 
-      /* Radio button and checkbox labels */
-      .form-container .c-forms-choice-label {
-        color: #ffffff !important;
-      }
+        /* Placeholder text */
+        .form-container input::placeholder,
+        .form-container textarea::placeholder {
+            color: #666666 !important;
+        }
 
-      /* Buttons - use theme colors but keep default styling */
-      .form-container button,
-      .form-container input[type="submit"],
-      .form-container .c-forms-button {
-        background: linear-gradient(
-          135deg,
-          #17501c 0%,
-          #003122 100%
-        ) !important;
-        border-color: #33cc33 !important;
-        color: #ffffff !important;
-      }
+        /* Dropdown options - make text black */
+        .form-container select option {
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
 
-      .form-container button:hover,
-      .form-container input[type="submit"]:hover,
-      .form-container .c-forms-button:hover {
-        background: linear-gradient(
-          135deg,
-          #1c6b22 0%,
-          #004d33 100%
-        ) !important;
-      }
+        /* Cognito choice elements */
+        .form-container .cog-choice--dropdown,
+        .form-container .cog-choice--radiobuttons,
+        .form-container .cog-choice--checkboxes {
+            color: #000000 !important;
+        }
 
-      /* Navigation buttons (Next, Back, Save) - ensure they show */
-      .form-container .c-forms-navigation button,
-      .form-container .c-forms-navigation input[type="submit"],
-      .form-container button[type="button"] {
-        background: linear-gradient(
-          135deg,
-          #17501c 0%,
-          #003122 100%
-        ) !important;
-        border: 1px solid #33cc33 !important;
-        color: #ffffff !important;
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-      }
+        /* Cognito dropdown menus */
+        .form-container .c-forms-dropdown-option,
+        .form-container .c-forms-select-option {
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
 
-      /* Progress bar */
-      .form-container .c-forms-progress-bar {
-        background-color: rgba(51, 204, 51, 0.2) !important;
-      }
+        .form-container .c-forms-dropdown-option:hover,
+        .form-container .c-forms-select-option:hover {
+            color: #000000 !important;
+            background: #f0f0f0 !important;
+        }
 
-      .form-container .c-forms-progress-bar-fill {
-        background-color: #33cc33 !important;
-      }
+        /* Element UI input components */
+        .form-container .el-input__inner {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 1px solid #dcdfe6 !important;
+        }
 
-      /* Form title */
-      .form-container .c-forms-form-title {
-        color: #ffffff !important;
-        text-align: center;
-        margin-bottom: 20px;
-      }
+        /* Element UI dropdown options - multiple selectors */
+        .el-select-dropdown__item,
+        .el-option,
+        .form-container .el-select-dropdown__item,
+        .form-container .el-option,
+        .el-select-dropdown .el-select-dropdown__item,
+        body .el-select-dropdown__item {
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
 
-      /* Make sure all buttons are visible */
-      .form-container button,
-      .form-container input[type="button"],
-      .form-container input[type="submit"] {
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-      }
+        .el-select-dropdown__item:hover,
+        .el-option:hover,
+        .form-container .el-select-dropdown__item:hover,
+        .form-container .el-option:hover,
+        .el-select-dropdown .el-select-dropdown__item:hover,
+        body .el-select-dropdown__item:hover {
+            color: #000000 !important;
+            background: #f5f7fa !important;
+        }
 
-      /* Specifically target back button if it has a specific class */
-      .form-container .c-forms-button-back,
-      .form-container [data-button="back"],
-      .form-container button[onclick*="back"],
-      .form-container button[onclick*="previous"] {
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        background: linear-gradient(
-          135deg,
-          #17501c 0%,
-          #003122 100%
-        ) !important;
-        border: 1px solid #33cc33 !important;
-        color: #ffffff !important;
-      }
+        /* Element UI dropdown list - target globally */
+        .el-select-dropdown,
+        .el-popper,
+        .form-container .el-select-dropdown,
+        .form-container .el-popper,
+        body .el-select-dropdown {
+            background: #ffffff !important;
+            border: 1px solid #e4e7ed !important;
+        }
 
-      /* Hide Cognito branding */
-      .form-container .c-forms-branding {
-        display: none !important;
-      }
+        /* Try targeting by aria attributes */
+        [role="listbox"],
+        [role="option"],
+        [id*="listbox"],
+        [id*="option"] {
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
 
-      /* Comprehensive Cognito Form Styling using CSS Variables and ID targeting */
-      #psifi-form .cog-cognito {
-        --form__background-color: transparent !important;
-        --input__background-color: rgba(26, 32, 46, 0.8) !important;
-        --input__text-color: white !important;
-        --button-primary__background-color: #6366f1 !important;
-        --button-primary__text-color: white !important;
-        --text-color: white !important;
-        --label-color: white !important;
-        --field-label-color: white !important;
-      }
+        /* Cognito specific dropdown targeting */
+        [id*="cog-"][id*="-listbox"],
+        [id*="cog-"][id*="-option"] {
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
 
-      /* Universal text selector - ensures ALL text elements are white */
-      #psifi-form .cog-cognito * {
-        color: white !important;
-      }
+        /* Dropdown option items specifically */
+        .form-container .cog-choice--dropdown option,
+        .form-container .cog-choice--dropdown select option {
+            color: #000000 !important;
+            background: #ffffff !important;
+        }
 
-      #psifi-form .cog-cognito .cog-section {
-        background: transparent !important;
-        color: white !important;
-      }
+        /* Radio button and checkbox labels */
+        .form-container .c-forms-choice-label {
+            color: #ffffff !important;
+        }
 
-      #psifi-form .cog-cognito .cog-field input,
-      #psifi-form .cog-cognito .cog-field select,
-      #psifi-form .cog-cognito .cog-field textarea {
-        background: rgba(26, 32, 46, 0.8) !important;
-        border: 1px solid rgba(99, 102, 241, 0.5) !important;
-        color: white !important;
-      }
+        /* Buttons - use theme colors but keep default styling */
+        .form-container button,
+        .form-container input[type="submit"],
+        .form-container .c-forms-button {
+            background: linear-gradient(135deg,
+                    #17501c 0%,
+                    #003122 100%) !important;
+            border-color: #33cc33 !important;
+            color: #ffffff !important;
+        }
 
-      #psifi-form .cog-cognito .cog-field label,
-      #psifi-form .cog-cognito label,
-      #psifi-form .cog-cognito p,
-      #psifi-form .cog-cognito span,
-      #psifi-form .cog-cognito div,
-      #psifi-form .cog-cognito h1,
-      #psifi-form .cog-cognito h2,
-      #psifi-form .cog-cognito h3,
-      #psifi-form .cog-cognito h4,
-      #psifi-form .cog-cognito h5,
-      #psifi-form .cog-cognito h6 {
-        color: white !important;
-      }
+        .form-container button:hover,
+        .form-container input[type="submit"]:hover,
+        .form-container .c-forms-button:hover {
+            background: linear-gradient(135deg,
+                    #1c6b22 0%,
+                    #004d33 100%) !important;
+        }
 
-      /* Placeholder text styling */
-      #psifi-form .cog-cognito input::placeholder,
-      #psifi-form .cog-cognito textarea::placeholder {
-        color: rgba(255, 255, 255, 0.7) !important;
-      }
+        /* Navigation buttons (Next, Back, Save) - ensure they show */
+        .form-container .c-forms-navigation button,
+        .form-container .c-forms-navigation input[type="submit"],
+        .form-container button[type="button"] {
+            background: linear-gradient(135deg,
+                    #17501c 0%,
+                    #003122 100%) !important;
+            border: 1px solid #33cc33 !important;
+            color: #ffffff !important;
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
 
-      .header {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-direction: row;
-        padding: 15px 50px;
-        z-index: 11;
-      }
+        /* Progress bar */
+        .form-container .c-forms-progress-bar {
+            background-color: rgba(51, 204, 51, 0.2) !important;
+        }
 
-      .dashboard-btn {
-        position: relative;
-        z-index: 10;
-        background: linear-gradient(135deg, #17501c 0%, #003122 100%);
-        color: #fff;
-        padding: 0.6rem 1.2rem;
-        border-radius: 2rem;
-        border: none;
-        font-size: 1rem;
-        font-weight: 600;
-        box-shadow: 0 2px 10px rgba(23, 80, 28, 0.25);
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.3s ease;
-      }
-      /* Style Cognito Save Dialog/Modal */
-      .cog-dialog,
-      .cog-modal,
-      .cog-overlay,
-      .cog-confirm-dialog {
-        z-index: 11 !important;
-        background: rgba(0, 0, 0, 0.8) !important;
-        backdrop-filter: blur(10px) !important;
-      }
+        .form-container .c-forms-progress-bar-fill {
+            background-color: #33cc33 !important;
+        }
 
-      .cog-dialog__content,
-      .cog-modal__content,
-      .cog-confirm-dialog__content {
-        background: linear-gradient(
-          135deg,
-          #1a1a1a 0%,
-          #0d2818 100%
-        ) !important;
-        border: 1px solid rgba(51, 204, 51, 0.3) !important;
-        border-radius: 12px !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
-        color: #ffffff !important;
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
-        max-width: 90vw !important;
-        max-height: 90vh !important;
-        overflow: auto !important;
-        padding: 24px !important;
-      }
+        /* Form title */
+        .form-container .c-forms-form-title {
+            color: #ffffff !important;
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-      /* Dialog text styling */
-      .cog-dialog__content h1,
-      .cog-dialog__content h2,
-      .cog-dialog__content h3,
-      .cog-modal__content h1,
-      .cog-modal__content h2,
-      .cog-modal__content h3 {
-        color: #33cc33 !important;
-        margin-bottom: 16px !important;
-      }
+        /* Make sure all buttons are visible */
+        .form-container button,
+        .form-container input[type="button"],
+        .form-container input[type="submit"] {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
 
-      .cog-dialog__content p,
-      .cog-modal__content p {
-        color: #e0e0e0 !important;
-        line-height: 1.5 !important;
-        margin-bottom: 12px !important;
-      }
+        /* Specifically target back button if it has a specific class */
+        .form-container .c-forms-button-back,
+        .form-container [data-button="back"],
+        .form-container button[onclick*="back"],
+        .form-container button[onclick*="previous"] {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background: linear-gradient(135deg,
+                    #17501c 0%,
+                    #003122 100%) !important;
+            border: 1px solid #33cc33 !important;
+            color: #ffffff !important;
+        }
 
-      /* Dialog buttons */
-      .cog-dialog__content button,
-      .cog-modal__content button,
-      .cog-confirm-dialog__content button {
-        background: linear-gradient(
-          135deg,
-          #17501c 0%,
-          #003122 100%
-        ) !important;
-        border: 1px solid rgba(51, 204, 51, 0.4) !important;
-        border-radius: 8px !important;
-        color: #ffffff !important;
-        cursor: pointer !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        padding: 12px 24px !important;
-        margin: 8px 4px !important;
-        transition: all 0.3s ease !important;
-      }
+        /* Hide Cognito branding */
+        .form-container .c-forms-branding {
+            display: none !important;
+        }
 
-      .cog-dialog__content button:hover,
-      .cog-modal__content button:hover,
-      .cog-confirm-dialog__content button:hover {
-        background: linear-gradient(
-          135deg,
-          #1c6b22 0%,
-          #004d33 100%
-        ) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(23, 80, 28, 0.3) !important;
-      }
-      /* Success/Error message styling */
-      .cog-success-message {
-        background: rgba(51, 204, 51, 0.1) !important;
-        border: 1px solid rgba(51, 204, 51, 0.3) !important;
-        border-radius: 8px !important;
-        color: #33cc33 !important;
-        padding: 16px !important;
-        margin: 16px 0 !important;
-      }
+        /* Comprehensive Cognito Form Styling using CSS Variables and ID targeting */
+        #psifi-form .cog-cognito {
+            --form__background-color: transparent !important;
+            --input__background-color: rgba(26, 32, 46, 0.8) !important;
+            --input__text-color: white !important;
+            --button-primary__background-color: #6366f1 !important;
+            --button-primary__text-color: white !important;
+            --text-color: white !important;
+            --label-color: white !important;
+            --field-label-color: white !important;
+        }
 
-      .cog-error-message {
-        background: rgba(255, 51, 51, 0.1) !important;
-        border: 1px solid rgba(255, 51, 51, 0.3) !important;
-        border-radius: 8px !important;
-        color: #ff6666 !important;
-        padding: 16px !important;
-        margin: 16px 0 !important;
-      }
+        /* Universal text selector - ensures ALL text elements are white */
+        #psifi-form .cog-cognito * {
+            color: white !important;
+        }
 
-      /* Make dialog responsive */
-      @media (max-width: 768px) {
+        #psifi-form .cog-cognito .cog-section {
+            background: transparent !important;
+            color: white !important;
+        }
+
+        #psifi-form .cog-cognito .cog-field input,
+        #psifi-form .cog-cognito .cog-field select,
+        #psifi-form .cog-cognito .cog-field textarea {
+            background: rgba(26, 32, 46, 0.8) !important;
+            border: 1px solid rgba(99, 102, 241, 0.5) !important;
+            color: white !important;
+        }
+
+        #psifi-form .cog-cognito .cog-field label,
+        #psifi-form .cog-cognito label,
+        #psifi-form .cog-cognito p,
+        #psifi-form .cog-cognito span,
+        #psifi-form .cog-cognito div,
+        #psifi-form .cog-cognito h1,
+        #psifi-form .cog-cognito h2,
+        #psifi-form .cog-cognito h3,
+        #psifi-form .cog-cognito h4,
+        #psifi-form .cog-cognito h5,
+        #psifi-form .cog-cognito h6 {
+            color: white !important;
+        }
+
+        /* Placeholder text styling */
+        #psifi-form .cog-cognito input::placeholder,
+        #psifi-form .cog-cognito textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        .header {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row;
+            padding: 15px 50px;
+            z-index: 11;
+        }
+
+        .dashboard-btn {
+            position: relative;
+            z-index: 10;
+            background: linear-gradient(135deg, #17501c 0%, #003122 100%);
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(23, 80, 28, 0.25);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Style Cognito Save Dialog/Modal */
+        .cog-dialog,
+        .cog-modal,
+        .cog-overlay,
+        .cog-confirm-dialog {
+            z-index: 11 !important;
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(10px) !important;
+        }
+
         .cog-dialog__content,
         .cog-modal__content,
         .cog-confirm-dialog__content {
-          max-width: 95vw !important;
-          max-height: 85vh !important;
-          padding: 16px !important;
-          margin: 20px auto !important;
+            background: linear-gradient(135deg,
+                    #1a1a1a 0%,
+                    #0d2818 100%) !important;
+            border: 1px solid rgba(51, 204, 51, 0.3) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+            color: #ffffff !important;
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif !important;
+            max-width: 90vw !important;
+            max-height: 90vh !important;
+            overflow: auto !important;
+            padding: 24px !important;
         }
-      }
-      */ .dashboard-btn:hover {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 14px 40px rgba(23, 80, 28, 0.3);
-        background: linear-gradient(135deg, #1c6b22 0%, #003122 100%);
-      }
 
-      /* Custom scrollbar to match theme */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
+        /* Dialog text styling */
+        .cog-dialog__content h1,
+        .cog-dialog__content h2,
+        .cog-dialog__content h3,
+        .cog-modal__content h1,
+        .cog-modal__content h2,
+        .cog-modal__content h3 {
+            color: #33cc33 !important;
+            margin-bottom: 16px !important;
+        }
 
-      ::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-      }
+        .cog-dialog__content p,
+        .cog-modal__content p {
+            color: #e0e0e0 !important;
+            line-height: 1.5 !important;
+            margin-bottom: 12px !important;
+        }
 
-      ::-webkit-scrollbar-thumb {
-        background: rgba(51, 204, 51, 0.3);
-        border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
+        /* Dialog buttons */
+        .cog-dialog__content button,
+        .cog-modal__content button,
+        .cog-confirm-dialog__content button {
+            background: linear-gradient(135deg,
+                    #17501c 0%,
+                    #003122 100%) !important;
+            border: 1px solid rgba(51, 204, 51, 0.4) !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            cursor: pointer !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            padding: 12px 24px !important;
+            margin: 8px 4px !important;
+            transition: all 0.3s ease !important;
+        }
 
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(51, 204, 51, 0.5);
-        border-color: rgba(255, 255, 255, 0.2);
-      }
+        .cog-dialog__content button:hover,
+        .cog-modal__content button:hover,
+        .cog-confirm-dialog__content button:hover {
+            background: linear-gradient(135deg,
+                    #1c6b22 0%,
+                    #004d33 100%) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 8px 20px rgba(23, 80, 28, 0.3) !important;
+        }
 
-      /* For Firefox */
-      * {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(51, 204, 51, 0.3) rgba(0, 0, 0, 0.1);
-      }
+        /* Success/Error message styling */
+        .cog-success-message {
+            background: rgba(51, 204, 51, 0.1) !important;
+            border: 1px solid rgba(51, 204, 51, 0.3) !important;
+            border-radius: 8px !important;
+            color: #33cc33 !important;
+            padding: 16px !important;
+            margin: 16px 0 !important;
+        }
+
+        .cog-error-message {
+            background: rgba(255, 51, 51, 0.1) !important;
+            border: 1px solid rgba(255, 51, 51, 0.3) !important;
+            border-radius: 8px !important;
+            color: #ff6666 !important;
+            padding: 16px !important;
+            margin: 16px 0 !important;
+        }
+
+        /* Make dialog responsive */
+        @media (max-width: 768px) {
+
+            .cog-dialog__content,
+            .cog-modal__content,
+            .cog-confirm-dialog__content {
+                max-width: 95vw !important;
+                max-height: 85vh !important;
+                padding: 16px !important;
+                margin: 20px auto !important;
+            }
+        }
+
+        */ .dashboard-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 14px 40px rgba(23, 80, 28, 0.3);
+            background: linear-gradient(135deg, #1c6b22 0%, #003122 100%);
+        }
+
+        /* Custom scrollbar to match theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(51, 204, 51, 0.3);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(51, 204, 51, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* For Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(51, 204, 51, 0.3) rgba(0, 0, 0, 0.1);
+        }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <!-- Background Elements -->
     <div class="background"></div>
 
     <!-- Floating Orbs -->
     <div class="background-elements">
-      <div class="floating-orb orb-1"></div>
-      <div class="floating-orb orb-2"></div>
-      <div class="floating-orb orb-3"></div>
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
     </div>
 
     <!-- Floating Particles -->
     <div class="particles-container">
-      <div class="particle" style="left: 10%; animation-delay: 0s"></div>
-      <div class="particle" style="left: 20%; animation-delay: 1s"></div>
-      <div class="particle" style="left: 30%; animation-delay: 2s"></div>
-      <div class="particle" style="left: 40%; animation-delay: 3s"></div>
-      <div class="particle" style="left: 50%; animation-delay: 4s"></div>
-      <div class="particle" style="left: 60%; animation-delay: 5s"></div>
-      <div class="particle" style="left: 70%; animation-delay: 6s"></div>
-      <div class="particle" style="left: 80%; animation-delay: 7s"></div>
-      <div class="particle" style="left: 90%; animation-delay: 8s"></div>
-      <div class="particle" style="left: 15%; animation-delay: 9s"></div>
-      <div class="particle" style="left: 25%; animation-delay: 10s"></div>
-      <div class="particle" style="left: 35%; animation-delay: 11s"></div>
-      <div class="particle" style="left: 45%; animation-delay: 12s"></div>
-      <div class="particle" style="left: 55%; animation-delay: 13s"></div>
-      <div class="particle" style="left: 65%; animation-delay: 14s"></div>
-      <div class="particle" style="left: 75%; animation-delay: 15s"></div>
-      <div class="particle" style="left: 85%; animation-delay: 16s"></div>
-      <div class="particle" style="left: 95%; animation-delay: 17s"></div>
-      <div class="particle" style="left: 5%; animation-delay: 18s"></div>
-      <div class="particle" style="left: 95%; animation-delay: 19s"></div>
+        <div class="particle" style="left: 10%; animation-delay: 0s"></div>
+        <div class="particle" style="left: 20%; animation-delay: 1s"></div>
+        <div class="particle" style="left: 30%; animation-delay: 2s"></div>
+        <div class="particle" style="left: 40%; animation-delay: 3s"></div>
+        <div class="particle" style="left: 50%; animation-delay: 4s"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s"></div>
+        <div class="particle" style="left: 70%; animation-delay: 6s"></div>
+        <div class="particle" style="left: 80%; animation-delay: 7s"></div>
+        <div class="particle" style="left: 90%; animation-delay: 8s"></div>
+        <div class="particle" style="left: 15%; animation-delay: 9s"></div>
+        <div class="particle" style="left: 25%; animation-delay: 10s"></div>
+        <div class="particle" style="left: 35%; animation-delay: 11s"></div>
+        <div class="particle" style="left: 45%; animation-delay: 12s"></div>
+        <div class="particle" style="left: 55%; animation-delay: 13s"></div>
+        <div class="particle" style="left: 65%; animation-delay: 14s"></div>
+        <div class="particle" style="left: 75%; animation-delay: 15s"></div>
+        <div class="particle" style="left: 85%; animation-delay: 16s"></div>
+        <div class="particle" style="left: 95%; animation-delay: 17s"></div>
+        <div class="particle" style="left: 5%; animation-delay: 18s"></div>
+        <div class="particle" style="left: 95%; animation-delay: 19s"></div>
     </div>
     <div class="header">
-      <img
-        src="../../static/images/logo_psifi.png"
-        alt=""
-        style="max-width: 100px; z-index: 20; position: relative"
-      />
-      <a href="/dashboard/" class="dashboard-btn">Dashboard</a>
+        <img src="../../static/images/logo_psifi.png" alt=""
+            style="max-width: 100px; z-index: 20; position: relative" />
+        <a href="/dashboard/" class="dashboard-btn">Dashboard</a>
     </div>
     <div id="psifi-form" class="form-container">
-      <script
-        src="https://www.cognitoforms.com/f/seamless.js"
-        data-key="B1EGXzUdukiPlRx54XWcPQ"
-        data-form="1"
-        data-style="chameleon"
-        data-save="true"
-      ></script>
+        <script src="https://www.cognitoforms.com/f/seamless.js" data-key="B1EGXzUdukiPlRx54XWcPQ" data-form="1"
+            data-style="chameleon" data-save="true"></script>
     </div>
 
     <!-- Payment Gateway Integration JavaScript -->
     <script>
-      // Helper: try to read amount from DOM span with data-id="TotalFee"
-      function getTotalFromDOM() {
-        try {
-          const el = document.querySelector('[data-id="TotalFee"]');
-          if (!el) return null;
-          const raw = (el.innerText || el.textContent || "").trim();
-          let digits = "";
-          for (let i = 0; i < raw.length; i++) {
-            const c = raw[i];
-            if (c >= "0" && c <= "9") digits += c;
-          }
-          return digits ? parseInt(digits, 10) : null;
-        } catch (_) {
-          return null;
-        }
-      }
-
-      // Calculate TotalFee using server-aligned rules (EB cutoff: Nov 20 current year)
-      function calculateTotalFee(entry) {
-        try {
-          const toNumber = (val) => {
-            if (val === null || val === undefined) return 0;
-            if (typeof val === "number" && !Number.isNaN(val)) return val;
-            if (typeof val === "string") {
-              const cleaned = val.replace(/[^0-9.-]/g, "");
-              return cleaned ? parseFloat(cleaned) : 0;
-            }
-            return 0;
-          };
-
-          const get = (obj, path) => {
+        // Helper: try to read amount from DOM span with data-id="TotalFee"
+        function getTotalFromDOM() {
             try {
-              const parts = path.split(".");
-              let cur = obj;
-              for (const p of parts) {
-                if (cur && typeof cur === "object" && p in cur) {
-                  cur = cur[p];
-                } else {
-                  return undefined;
+                const el = document.querySelector('[data-id="TotalFee"]');
+                if (!el) return null;
+                const raw = (el.innerText || el.textContent || "").trim();
+                let digits = "";
+                for (let i = 0; i < raw.length; i++) {
+                    const c = raw[i];
+                    if (c >= "0" && c <= "9") digits += c;
                 }
-              }
-              return cur;
+                return digits ? parseInt(digits, 10) : null;
             } catch (_) {
-              return undefined;
+                return null;
             }
-          };
-
-          // TotalNights = Nights2 + Nights22 + Nights3 + TeamMember3Information.Nights4 + TeamMember4Information.Nights5
-          const nights2 = toNumber(entry.Nights2);
-          const nights22 = toNumber(entry.Nights22);
-          const nights3 = toNumber(entry.Nights3);
-          const nights4 = toNumber(
-            get(entry, "TeamMember3Information.Nights4")
-          );
-          const nights5 = toNumber(
-            get(entry, "TeamMember4Information.Nights5")
-          );
-          const totalNights = nights2 + nights22 + nights3 + nights4 + nights5;
-
-          // Registration phase based on cutoff Nov 20 of current year
-          const submittedRaw =
-            get(entry, "Entry.DateSubmitted") ||
-            entry.DateSubmitted ||
-            entry.Submitted ||
-            null;
-          const submitted = submittedRaw ? new Date(submittedRaw) : null;
-          const now = new Date();
-          const cutoff = new Date(`${now.getFullYear()}-11-20T23:59:59`);
-          let registrationPhase = "Regular Phase";
-          if (submitted instanceof Date && !Number.isNaN(submitted.getTime())) {
-            registrationPhase =
-              submitted.getTime() <= cutoff.getTime()
-                ? "Early Bird"
-                : "Regular Phase";
-          }
-
-          // EventsPrice by phase + number of events, multiplied by team size (3/4/5)
-          const eventsChoice = (
-            entry.SelectTheNumberOfEventsYouWishToParticipateIn || ""
-          ).toString();
-          const teamSizeStr = (entry.TeamSize || "").toString();
-          const teamCount = teamSizeStr.startsWith("3")
-            ? 3
-            : teamSizeStr.startsWith("4")
-            ? 4
-            : teamSizeStr.startsWith("5")
-            ? 5
-            : 0;
-          const isTwo = eventsChoice.startsWith("2");
-          const isThree = eventsChoice.startsWith("3");
-          let perPerson = 0;
-          if (registrationPhase === "Early Bird") {
-            perPerson = isTwo ? 7500 : isThree ? 8500 : 0;
-          } else {
-            perPerson = isTwo ? 8500 : isThree ? 9500 : 0;
-          }
-          const eventsPrice = perPerson * teamCount;
-
-          // Accommodation: 1500 per night total (sum across delegates). Delegation: flat (EB=0, Regular=3500)
-          const perNight = 1500;
-          const accommodationPrice = totalNights * perNight;
-          const delegationFee = registrationPhase === "Early Bird" ? 0 : 3500;
-
-          const total = accommodationPrice + delegationFee + eventsPrice;
-          console.log("Calculated TotalFee:", {
-            nights2,
-            nights22,
-            nights3,
-            nights4,
-            nights5,
-            totalNights,
-            phase: registrationPhase === "Early Bird" ? 1 : 2,
-            events: isTwo ? 2 : isThree ? 3 : 0,
-            teamCount,
-            perPerson,
-            perNight,
-            accommodationPrice,
-            delegationFee,
-            eventsPrice,
-            total,
-          });
-
-          return total;
-        } catch (e) {
-          console.error("Error calculating TotalFee:", e);
-          return null;
         }
-      }
-      // After successful Cognito submission: save payment link (no redirect)
-      // Using Cognito Forms client-side events API for seamless embed
-      // Wait for Cognito to be available
-      (function attachCognitoHandlers() {
-        const maxAttempts = 20;
-        let attempts = 0;
 
-        const checkAndAttach = setInterval(function () {
-          attempts++;
+        // Calculate TotalFee using server-aligned rules (EB cutoff: Nov 20 current year)
+        function calculateTotalFee(entry) {
+            try {
+                const toNumber = (val) => {
+                    if (val === null || val === undefined) return 0;
+                    if (typeof val === "number" && !Number.isNaN(val)) return val;
+                    if (typeof val === "string") {
+                        const cleaned = val.replace(/[^0-9.-]/g, "");
+                        return cleaned ? parseFloat(cleaned) : 0;
+                    }
+                    return 0;
+                };
 
-          if (
-            typeof Cognito !== "undefined" &&
-            typeof Cognito.on === "function"
-          ) {
-            clearInterval(checkAndAttach);
-            console.log("Cognito API detected, attaching afterSubmit handler");
-
-            Cognito.on("afterSubmit", function (event) {
-              try {
-                // According to docs: event.data.entry contains the submitted entry
-                const entry =
-                  event && event.data && event.data.entry
-                    ? event.data.entry
-                    : {};
-
-                try {
-                  console.log("afterSubmit event triggered");
-                  console.log("Entry keys:", Object.keys(entry || {}));
-                } catch (_) {}
-
-                // Send entry to our API (server will calculate total)
-                fetch("/api/create-payment/", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ entry: entry }),
-                })
-                  .then((r) => r.json())
-                  .then((res) => {
+                const get = (obj, path) => {
                     try {
-                      console.log(
-                        "Payment created successfully:",
-                        res && res.payment_url
-                      );
-                    } catch (_) {}
-                  })
-                  .catch((err) => {
-                    console.error("Payment creation failed:", err);
-                  });
-              } catch (e) {
-                console.error("afterSubmit handler error:", e);
-              }
-            });
-          } else if (attempts >= maxAttempts) {
-            clearInterval(checkAndAttach);
-            console.error(
-              "Cognito API not available after",
-              maxAttempts,
-              "attempts"
-            );
-          }
-        }, 200);
-      })();
+                        const parts = path.split(".");
+                        let cur = obj;
+                        for (const p of parts) {
+                            if (cur && typeof cur === "object" && p in cur) {
+                                cur = cur[p];
+                            } else {
+                                return undefined;
+                            }
+                        }
+                        return cur;
+                    } catch (_) {
+                        return undefined;
+                    }
+                };
+
+                // TotalNights = Nights2 + Nights22 + Nights3 + TeamMember3Information.Nights4 + TeamMember4Information.Nights5
+                const nights2 = toNumber(entry.Nights2);
+                const nights22 = toNumber(entry.Nights22);
+                const nights3 = toNumber(entry.Nights3);
+                const nights4 = toNumber(
+                    get(entry, "TeamMember3Information.Nights4")
+                );
+                const nights5 = toNumber(
+                    get(entry, "TeamMember4Information.Nights5")
+                );
+                const totalNights = nights2 + nights22 + nights3 + nights4 + nights5;
+
+                // Registration phase based on cutoff Nov 20 of current year
+                const submittedRaw =
+                    get(entry, "Entry.DateSubmitted") ||
+                    entry.DateSubmitted ||
+                    entry.Submitted ||
+                    null;
+                const submitted = submittedRaw ? new Date(submittedRaw) : null;
+                const now = new Date();
+                const cutoff = new Date(`${now.getFullYear()}-11-20T23:59:59`);
+                let registrationPhase = "Regular Phase";
+                if (submitted instanceof Date && !Number.isNaN(submitted.getTime())) {
+                    registrationPhase =
+                        submitted.getTime() <= cutoff.getTime()
+                            ? "Early Bird"
+                            : "Regular Phase";
+                }
+
+                // EventsPrice by phase + number of events, multiplied by team size (3/4/5)
+                const eventsChoice = (
+                    entry.SelectTheNumberOfEventsYouWishToParticipateIn || ""
+                ).toString();
+                const teamSizeStr = (entry.TeamSize || "").toString();
+                const teamCount = teamSizeStr.startsWith("3")
+                    ? 3
+                    : teamSizeStr.startsWith("4")
+                        ? 4
+                        : teamSizeStr.startsWith("5")
+                            ? 5
+                            : 0;
+                const isTwo = eventsChoice.startsWith("2");
+                const isThree = eventsChoice.startsWith("3");
+                let perPerson = 0;
+                if (registrationPhase === "Early Bird") {
+                    perPerson = isTwo ? 7500 : isThree ? 8500 : 0;
+                } else {
+                    perPerson = isTwo ? 8500 : isThree ? 9500 : 0;
+                }
+                const eventsPrice = perPerson * teamCount;
+
+                // Accommodation: 1500 per night total (sum across delegates). Delegation: flat (EB=0, Regular=3500)
+                const perNight = 1500;
+                const accommodationPrice = totalNights * perNight;
+                const delegationFee = registrationPhase === "Early Bird" ? 0 : 3500;
+
+                const total = accommodationPrice + delegationFee + eventsPrice;
+                console.log("Calculated TotalFee:", {
+                    nights2,
+                    nights22,
+                    nights3,
+                    nights4,
+                    nights5,
+                    totalNights,
+                    phase: registrationPhase === "Early Bird" ? 1 : 2,
+                    events: isTwo ? 2 : isThree ? 3 : 0,
+                    teamCount,
+                    perPerson,
+                    perNight,
+                    accommodationPrice,
+                    delegationFee,
+                    eventsPrice,
+                    total,
+                });
+
+                return total;
+            } catch (e) {
+                console.error("Error calculating TotalFee:", e);
+                return null;
+            }
+        }
+        // After successful Cognito submission: save payment link (no redirect)
+        // Using Cognito Forms client-side events API for seamless embed
+        // Wait for Cognito to be available
+        (function attachCognitoHandlers() {
+            const maxAttempts = 20;
+            let attempts = 0;
+
+            const checkAndAttach = setInterval(function () {
+                attempts++;
+
+                if (
+                    typeof Cognito !== "undefined" &&
+                    typeof Cognito.on === "function"
+                ) {
+                    clearInterval(checkAndAttach);
+                    console.log("Cognito API detected, attaching afterSubmit handler");
+
+                    Cognito.on("afterSubmit", function (event) {
+                        try {
+                            // According to docs: event.data.entry contains the submitted entry
+                            const entry =
+                                event && event.data && event.data.entry
+                                    ? event.data.entry
+                                    : {};
+
+                            try {
+                                console.log("afterSubmit event triggered");
+                                console.log("Entry keys:", Object.keys(entry || {}));
+                            } catch (_) { }
+
+                            // Send entry to our API (server will calculate total)
+                            fetch("/api/create-payment/", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ entry: entry }),
+                            })
+                                .then((r) => r.json())
+                                .then((res) => {
+                                    try {
+                                        console.log(
+                                            "Payment created successfully:",
+                                            res && res.payment_url
+                                        );
+                                    } catch (_) { }
+                                })
+                                .catch((err) => {
+                                    console.error("Payment creation failed:", err);
+                                });
+                        } catch (e) {
+                            console.error("afterSubmit handler error:", e);
+                        }
+                    });
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(checkAndAttach);
+                    console.error(
+                        "Cognito API not available after",
+                        maxAttempts,
+                        "attempts"
+                    );
+                }
+            }, 200);
+        })();
     </script>
     <script>
-      // When the page loads, check if there's a saved Cognito URL
-      window.addEventListener("load", () => {
-        const savedUrl = localStorage.getItem("cognitoUrl");
-        if (savedUrl && savedUrl !== document.location.href) {
-          console.log("Redirecting to saved Cognito URL:", savedUrl);
-          window.location.href = savedUrl;
-        }
-      });
-    
-      // Detect URL change
-      let oldHref = document.location.href;
-    
-      setInterval(() => {
-        if (oldHref !== document.location.href) {
-          oldHref = document.location.href;
-    
-          // Save new URL in localStorage
-          localStorage.setItem("cognitoUrl", oldHref);
-        }
-      }, 1000);
+        const loadCognitoLink = async (requestObj) => {
+            const resp = await fetch("/api/cognitoget", {
+                method: "POST",
+                body: JSON.stringify(requestObj),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            let respObj = await resp.json();
+            // return null;
+            return respObj.hasOwnProperty("error") ? null : respObj.cognito_link.replace(/^.*\/\/[^\/]+/, '');  // return only path not domain
+        };
+
+        const saveCognitoLink = async (requestObj) => {
+            const resp = await fetch("/api/cognitostore", {
+                method: "POST",
+                body: JSON.stringify(requestObj),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            // console.log("Saving?")
+            // console.log(resp.statusText);
+        };
+
+        // When the page loads, check if there's a saved Cognito URL
+        window.addEventListener("load", async () => {
+
+            let savedUrl = "";
+
+            const user = localStorage.getItem("loginUser");
+            const dbUrl = await loadCognitoLink({ user: user });
+            if (!dbUrl) // It might be using the legacy system
+                savedUrl = localStorage.getItem("cognitoUrl");
+            else savedUrl = dbUrl;
+
+            // console.log("Using saved url:");
+            // console.log(savedUrl)
+
+            if (savedUrl && savedUrl !== document.location.href) {
+                console.log("Redirecting to saved Cognito URL:", savedUrl);
+                window.location.href = savedUrl;
+            }
+        });
+
+        // Detect URL change
+        let oldHref = document.location.href;
+
+        setInterval(() => {
+            console.log("interval: ");
+            console.log("old: " + oldHref)
+            console.log("current: " + document.location.href)
+            if (oldHref !== document.location.href) {
+                oldHref = document.location.href;
+                console.log("heelllo?")
+                
+                //   localStorage.setItem("cognitoUrl", oldHref);
+                
+                // Save new URL in db
+                saveCognitoLink({ user: localStorage.getItem("loginUser"), cognito_link: oldHref })
+            }
+        }, 1000);
     </script>
-  </body>
+</body>
+
 </html>

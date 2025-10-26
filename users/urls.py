@@ -20,16 +20,18 @@ from django.contrib.auth import views as auth_views
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.decorators.csrf import csrf_exempt
+
 urlpatterns = [
     path('', views.home_view, name='home'),
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls), Not needed. Already present in psifi_portal/urls.py
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
+    path('team_detail/<int:pk>/', views.team_detail_view, name='team_detail'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('register/', views.register_page, name='register_page'),
     path("tally/webhook/", views.tally_webhook, name="tally_webhook"),
     path('payment_voucher/', views.payment_voucher_view, name='payment_voucher'),
-    path('team_detail/<int:pk>/', views.team_detail_view, name='team_detail'),
     path('logout/', views.custom_logout_view, name='logout'),
     path('contact/', views.contact, name='contact'),
     path('categories/', views.categories, name='categories'),
@@ -48,6 +50,10 @@ urlpatterns = [
     # Paymo endpoints
     path('api/create-payment/', views.create_payment, name='create_payment'),
     path('api/paymo/callback/', views.paymo_callback, name='paymo_callback'),
+    
+    # cognito form link saving
+    path('api/cognitostore', views.CongitoLinkStore.as_view(), name='cognito_store'),
+    path('api/cognitoget', views.CognitoLinkGet.as_view(), name='cognito_get'),
 
     # Sheets debug endpoint (temporary)
     path('api/debug/sheets-append/', views.debug_sheets_append, name='debug_sheets_append'),

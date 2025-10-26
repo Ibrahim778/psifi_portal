@@ -1,18 +1,18 @@
 from django.shortcuts import render, get_object_or_404
-from users.models import SymposiumRegistration
+from users.models import EventRegistration
 from .forms import NamePasswordResetForm  # Adjust path as needed
-from .models import CampusAmbassador, SymposiumRegistration
-from .models import SymposiumRegistration
+from .models import CampusAmbassador, EventRegistration
+from .models import EventRegistration
 import re
 from django.http import JsonResponse
 from django.utils import timezone
 import json
-from .models import SymposiumRegistration, SymposiumDelegate
+from .models import EventRegistration, EventDelegate
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
-from users.models import SymposiumRegistration, SymposiumDelegate
+from users.models import EventRegistration, EventDelegate
 from django.db.models import Q
 from .forms import CustomSignupForm  # You should create this!
 from django.views.decorators.cache import never_cache
@@ -32,6 +32,11 @@ from django.views.decorators.http import require_POST
 import os
 import requests
 from datetime import datetime
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import RegistrationLink
+from .serializers import RegistrationLinkSerializer, UserSerializer, LinkSerializer
+from django.utils.decorators import method_decorator
 
 try:
     import gspread
@@ -77,15 +82,17 @@ def dashboard_view(request):
     user_email = request.user.email
 
     # Check if this user is the head delegate of any registration
-    reg = SymposiumRegistration.objects.filter(
+    reg = EventRegistration.objects.filter(
         email__iexact=user_email).first()
 
-    has_registration = reg is not None
+    # emails = _pull_sheet_emails()
+
+    has_registration = False# user_email in emails
 
     # Debugging info
     print("Current user email:", repr(user_email))
     print("All registration emails:", list(
-        SymposiumRegistration.objects.values_list("email", flat=True)))
+        EventRegistration.objects.values_list("email", flat=True)))
     print("Registration object:", reg)
 
     return render(request, "dashboard.html", {
@@ -98,7 +105,7 @@ def dashboard_view(request):
 
 def register_page(request):
     # If user already has a registration, redirect to info page
-    if SymposiumRegistration.objects.filter(user=request.user).exists():
+    if EventRegistration.objects.filter(user=request.user).exists():
         return redirect('registration_info')
     # Your HTML with the iframe embed
     return render(request, 'embed_cognito.html')
@@ -157,11 +164,11 @@ def tally_webhook(request):
                     "options", []) if option["id"] in f.get("value", [])]
 
         # Prevent duplicate registration
-        if SymposiumRegistration.objects.filter(email=email, team_name=team_name).exists():
+        if EventRegistration.objects.filter(email=email, team_name=team_name).exists():
             return JsonResponse({"detail": "Already registered"}, status=409)
         User = get_user_model()
 
-        reg = SymposiumRegistration.objects.create(
+        reg = EventRegistration.objects.create(
 
             email=email,
             registration_type=registration_type,
@@ -277,7 +284,7 @@ def tally_webhook(request):
             cnic_val = delegate_data.get("cnic", "")
             # Only create if CNIC is present and non-empty
             if cnic_val and str(cnic_val).strip():
-                SymposiumDelegate.objects.create(**delegate_data)
+                EventDelegate.objects.create(**delegate_data)
         # --- Chaperone fields ---
         reg.chaperone_name = extract("question_er2X4o")
         reg.chaperone_cnic = extract("question_WRY7yQ")
@@ -314,7 +321,7 @@ def tally_webhook(request):
 # 3. Show registration info to user
 @login_required
 def registration_info(request):
-    reg = get_object_or_404(SymposiumRegistration, user=request.user)
+    reg = get_object_or_404(EventRegistration, user=request.user)
     delegates = reg.delegates.all()
     return render(request, 'registration_info.html', {'registration': reg, 'delegates': delegates})
 
@@ -330,7 +337,7 @@ def register_page(request):
 @login_required
 @login_required
 def payment_voucher_view(request):
-    registration = SymposiumRegistration.objects.filter(
+    registration = EventRegistration.objects.filter(
         email=request.user.email).first()
     if not registration:
         return redirect('register_page')
@@ -352,11 +359,11 @@ def payment_voucher_view(request):
 
 
 def team_detail_view(request, pk):
-    reg = get_object_or_404(SymposiumRegistration, id=pk)
-    delegates = SymposiumDelegate.objects.filter(registration=reg)
+    reg = get_object_or_404(EventRegistration, id=pk)
+    delegates = EventDelegate.objects.filter(registration=reg)
 
     if not delegates.exists():
-        delegates = SymposiumDelegate.objects.filter(email=reg.email)
+        delegates = EventDelegate.objects.filter(email=reg.email)
         # Or: SymposiumDelegate.objects.filter(team_name=reg.team_name)
 
     return render(request, 'team_detail.html', {
@@ -424,7 +431,7 @@ def cadashboard(request):
     ca = get_object_or_404(CampusAmbassador, id=ca_id)
 
     # 3. Get teams with the same CA code (case-insensitive match)
-    teams = SymposiumRegistration.objects.filter(ca_code__iexact=ca.code)
+    teams = EventRegistration.objects.filter(ca_code__iexact=ca.code)
 
     # 4. You can calculate stats here
     total_teams = teams.count()
@@ -479,6 +486,44 @@ def name_password_reset(request):
         form = NamePasswordResetForm()
     return render(request, 'name_password_reset.html', {'form': form})
 
+
+# def _pull_sheet_emails():
+#     # Prefer env var; fallback to provided sheet ID
+#     spreadsheet_id = os.environ.get(
+#         'REGISTRATION_SHEETS_ID',
+#         '1hzVqDWLQlHnqRs0xJHW8PIyLYY9vSOGYOr7EKJL2pQ8'
+#     )
+#     service_account_file = os.environ.get(
+#         'GOOGLE_APPLICATION_CREDENTIALS',
+#         os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'psifi-475008-e9cc54468e6b.json'))
+#     )
+
+#     scopes = [
+#         'https://www.googleapis.com/auth/spreadsheets',
+#         'https://www.googleapis.com/auth/drive'
+#     ]
+
+#     print('[Sheets] Using service account file:', service_account_file)
+#     print('[Sheets] Spreadsheet ID:', spreadsheet_id)
+#     creds = Credentials.from_service_account_file(
+#         service_account_file, scopes=scopes)
+#     client = gspread.authorize(creds)
+#     sheet = client.open_by_key(spreadsheet_id).sheet1
+    
+#     # email_columns = []
+
+#     # for (idx,col) in enumerate(sheet.row_values(1)):
+#     #     print(f"idx: {idx} col: {col}")
+#     #     if("Email" in col):
+#     #         email_columns.append(idx + 1);
+
+#     email_columns = [24, 35, 46, 57, 68, 80] # hardcoded it to speed up load times
+
+#     emails = []
+#     for i in email_columns:
+#         emails += sheet.col_values(i)[1:]
+    
+#     return emails
 
 # ---- Paymo PG Integration ----
 
@@ -860,10 +905,10 @@ def create_payment(request):
     # Find an existing registration by email+team_name if possible
     reg = None
     if email and team_name:
-        reg = SymposiumRegistration.objects.filter(
+        reg = EventRegistration.objects.filter(
             email__iexact=email, team_name__iexact=team_name).first()
     elif email:
-        reg = SymposiumRegistration.objects.filter(
+        reg = EventRegistration.objects.filter(
             email__iexact=email).order_by('-submitted_at').first()
 
     if reg and (amount is None or amount <= 0):
@@ -955,7 +1000,6 @@ def create_payment(request):
         print('[CreatePayment] Network error to Paymo:', str(e))
         return JsonResponse({'detail': 'Network error to Paymo', 'error': str(e)}, status=502)
 
-
 @csrf_exempt
 @require_POST
 def paymo_callback(request):
@@ -973,10 +1017,10 @@ def paymo_callback(request):
 
     reg = None
     if email and team_name:
-        reg = SymposiumRegistration.objects.filter(
+        reg = EventRegistration.objects.filter(
             email__iexact=email, team_name__iexact=team_name).first()
     elif email:
-        reg = SymposiumRegistration.objects.filter(
+        reg = EventRegistration.objects.filter(
             email__iexact=email).order_by('-submitted_at').first()
 
     if reg:
@@ -991,6 +1035,53 @@ def paymo_callback(request):
         reg.save()
 
     return JsonResponse({'ok': True})
+
+# THESE ARE INSECURE we should fix
+# Endpoint for client side js to read and write to cognito link db.
+
+class CongitoLinkStore(APIView):
+    authentication_classes = []  # disables all authentication (needed for csrf)
+
+    def post(self, request):
+        userSerializer = UserSerializer(data=request.data)
+        linkSerializer = LinkSerializer(data=request.data)
+
+        if not linkSerializer.is_valid():
+            return Response(serializer.errors, status=400) # Malformed input
+
+        if userSerializer.is_valid(): # try and find an already existing registration with this email, we will update it
+            try:
+                registration = RegistrationLink.objects.get(user=userSerializer.validated_data['user'])
+                registration.cognito_link = linkSerializer.validated_data['cognito_link']
+                registration.save()
+                return Response({"message": "Updated"}, status=201)
+
+            except:
+                pass # just fall through
+            
+            
+        serializer = RegistrationLinkSerializer(data=request.data) # We use this one specifically so it can validate input
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Saved."}, status=201)
+        
+        return Response(serializer.errors, status=400)
+
+class CognitoLinkGet(APIView):
+    authentication_classes = []  # disables all authentication (needed for csrf)
+
+    def post(self, request): # Client will send a post request with the email
+        serializer = UserSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            try:
+                reglink = RegistrationLink.objects.get(user=serializer.validated_data['user'])
+            except:
+                return Response({"error": "Registration link not found."}, status=404)
+            
+            return Response(RegistrationLinkSerializer(reglink).data, status=200)
+
+        return Response(serializer.errors, status=400)
 
 
 # ---- Debug utilities ----
