@@ -853,7 +853,14 @@
             const user = localStorage.getItem("loginUser");
             const dbUrl = await loadCognitoLink({ user: user });
             if (!dbUrl) // It might be using the legacy system
+            {
                 savedUrl = localStorage.getItem("cognitoUrl");
+                if(savedUrl) // Upload to db and remove local cookie
+                {
+                    saveCognitoLink({ user: user, cognito_link: savedUrl })
+                    localStorage.removeItem("cognitoUrl");
+                }
+            }
             else savedUrl = dbUrl;
 
             // console.log("Using saved url:");
